@@ -1,4 +1,5 @@
 const { Schema, Types } = require('mongoose');
+const getTimeStamp = require('../utils/getTimeStamp');
 
 const reactionSchema = new Schema(
   {
@@ -20,6 +21,7 @@ const reactionSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      get: timeStamp => getTimeStamp(timeStamp)
     },
   },
   {

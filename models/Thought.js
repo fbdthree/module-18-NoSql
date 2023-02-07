@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
 const reactionSchema = require('./Reaction');
+const getTimeStamp = require('../utils/getTimeStamp');
+
 
 // Schema to create Student model
 const thoughtSchema = new Schema(
@@ -12,6 +14,7 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
+      get: timeStamp => getTimeStamp(timeStamp)
     },
     username: {
       type: String,
