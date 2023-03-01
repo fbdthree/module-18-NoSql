@@ -11,10 +11,12 @@ module.exports = {
   getUser(req, res) {
    User.findOne({ _id: req.params.id })
       .select('-__v')
-      .then((userdata) =>
+      .then((userData) => {
          res.json(userData)
-      )
-      .catch((err) => res.status(500).json(err));
+  })
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json(err)});
   },
   // Create a user
   createUser(req, res) {
@@ -31,10 +33,9 @@ module.exports = {
       .then((userdata) =>
         res.json(userdata)
       )
-      .then(() => res.json({ message: 'Course and students deleted!' }))
       .catch((err) => res.status(500).json(err));
   },
-  // Update a course
+  // Update user
   updateUser(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.id },
@@ -45,5 +46,37 @@ module.exports = {
          res.json(userdata)
       )
       .catch((err) => res.status(500).json(err));
+  },
+//add friend
+ addFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.id },
+      { $addToSet:{friends:req.params.friendId} },
+      {  new: true }
+    )
+      .then((userdata) =>{
+        console.log(userdata)
+         res.json(userdata)
+  })
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json(err)
+      })
+  },
+  // remove friend
+  removeFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.id },
+      { $pull:{friends:req.params.friendId} },
+      {  new: true }
+    )
+      .then((userdata) =>{
+        console.log(userdata)
+         res.json(userdata)
+  })
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json(err)
+      })
   },
 };

@@ -1,10 +1,5 @@
-// ObjectId() method for converting studentId string into an ObjectId for querying database
-const { ObjectId } = require('mongoose').Types;
+
 const {User, Thought } = require('../models');
-
-
-
-
 
 module.exports = {
   // Get all thoughtsData
@@ -13,7 +8,7 @@ module.exports = {
       .then(async (thoughtsData) => {
         const studentObj = {
           thoughtsData,
-          headCount: await headCount(),
+         
         };
         return res.json(studentObj);
       })
@@ -30,10 +25,10 @@ module.exports = {
       .then(async (thoughtData) =>
         !thoughtData
           ? res.status(404).json({ message: 'No thoughtData with that ID' })
-          : res.json({
-              thoughtData,
-              grade: await grade(req.params.studentId),
-            })
+          : res.json(
+              thoughtData
+             
+            )
       )
       .catch((err) => {
         console.log(err);
@@ -43,27 +38,19 @@ module.exports = {
   // create a new thoughtData
   createThought(req, res) {
     Thought.create(req.body)
-      .then((thoughtData) => res.json(thoughtData))
-      .catch((err) => res.status(500).json(err));
+      .then((thoughtData) => {
+        console.log(thoughtData)
+        res.json(thoughtData)})
+      .catch((err) => {
+        console.log(err)
+        res.status(500).json(err)});
   },
   // Delete a thoughtData and remove them from the course
   deleteThought(req, res) {
-    Thought.findOneAndRemove({ _id: req.params.studentId })
+    Thought.findOneAndRemove({ _id: req.params.thoughtId })
       .then((thoughtData) =>
-        !thoughtData
-          ? res.status(404).json({ message: 'No such thoughtData exists' })
-          : Course.findOneAndUpdate(
-              { thoughtsData: req.params.studentId },
-              { $pull: { thoughtsData: req.params.thoughtId } },
-              { new: true }
-            )
-      )
-      .then((course) =>
-        !course
-          ? res.status(404).json({
-              message: 'Thought deleted, but no courses found',
-            })
-          : res.json({ message: 'Thought successfully deleted' })
+       
+          res.json({ message: 'Thought successfully deleted' })
       )
       .catch((err) => {
         console.log(err);
@@ -77,7 +64,7 @@ module.exports = {
     console.log(req.body);
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $addToSet: { assignments: req.body } },
+      { $addToSet: { reactions: req.body } },
       { runValidators: true, new: true }
     )
       .then((thoughtData) =>
@@ -92,7 +79,7 @@ module.exports = {
   // Remove assignment from a thoughtData
   removeReaction(req, res) {
     Thought.findOneAndUpdate(
-      { _id: req.params.studentId },
+      { _id: req.params.thoughtId },
       { $pull: { reactions: { reactionId: req.params.reactionId } } },
       { runValidators: true, new: true }
     )
@@ -102,6 +89,17 @@ module.exports = {
               .status(404)
               .json({ message: 'No thoughtData found with that ID :(' })
           : res.json(thoughtData)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+  updateThought(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((userdata) =>
+         res.json(userdata)
       )
       .catch((err) => res.status(500).json(err));
   },

@@ -33,4 +33,4 @@ const thoughtSchema = new Schema(
 
 const Thoughts = model('thoughts', thoughtSchema);
 
-module.exports = Student;
+module.exports = Thoughts;
